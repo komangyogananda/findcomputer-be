@@ -68,7 +68,7 @@ public class AuthController {
       return new ResponseEntity(new ApiResponse(false, "Email is already used"), HttpStatus.BAD_REQUEST);
     }
 
-    User user = new User(signUpRequest.getName(), signUpRequest.getEmail(), signUpRequest.getTelp(), signUpRequest.getUsername(), signUpRequest.getPassword(), signUpRequest.getDescription(), null);
+    User user = new User(signUpRequest.getName(), signUpRequest.getEmail(), signUpRequest.getTelp(), signUpRequest.getUsername(), signUpRequest.getPassword(), signUpRequest.getDescription());
     user.setPassword(passwordEncoder.encode(user.getPassword()));
     User result = userRepo.save(user);
 

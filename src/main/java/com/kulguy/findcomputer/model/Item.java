@@ -17,6 +17,7 @@ import javax.validation.constraints.NotNull;
 import javax.validation.constraints.Positive;
 
 import java.time.Instant;
+import java.util.Objects;
 
 @Entity
 @Table(name = "items")
@@ -30,10 +31,6 @@ public class Item extends DateAudit {
   @ManyToOne(fetch = FetchType.LAZY)
   @JoinColumn(name = "user_id")
   private User user;
-
-  @ManyToOne(fetch = FetchType.LAZY)
-  @JoinColumn(name = "user_bought_id")
-  private User userBought;
 
   @NotBlank
   @Column(nullable = false, name = "title")
@@ -53,19 +50,19 @@ public class Item extends DateAudit {
   @Enumerated(EnumType.STRING)
   @Column(nullable = false, name = "status")
   private ItemStatus status;
+ 
 
-  @Column(nullable = true, name = "sold_at")
-  private Instant soldAt;
+  public Item() {
+  }
 
-
-  public Item(){}
-
-  public Item(User user, String title, String description, ItemCategory category, Long price) {
+  public Item(Long id, User user, String title, String description, ItemCategory category, Long price, ItemStatus status) {
+    this.id = id;
     this.user = user;
     this.title = title;
     this.description = description;
     this.category = category;
     this.price = price;
+    this.status = status;
   }
 
   public Long getId() {
@@ -82,14 +79,6 @@ public class Item extends DateAudit {
 
   public void setUser(User user) {
     this.user = user;
-  }
-
-  public User getUserBought() {
-    return this.userBought;
-  }
-
-  public void setUserBought(User userBought) {
-    this.userBought = userBought;
   }
 
   public String getTitle() {
@@ -132,12 +121,68 @@ public class Item extends DateAudit {
     this.status = status;
   }
 
-  public Instant getSoldAt() {
-    return this.soldAt;
+  public Item id(Long id) {
+    this.id = id;
+    return this;
   }
 
-  public void setSoldAt(Instant soldAt) {
-    this.soldAt = soldAt;
+  public Item user(User user) {
+    this.user = user;
+    return this;
+  }
+
+  public Item title(String title) {
+    this.title = title;
+    return this;
+  }
+
+  public Item description(String description) {
+    this.description = description;
+    return this;
+  }
+
+  public Item category(ItemCategory category) {
+    this.category = category;
+    return this;
+  }
+
+  public Item price(Long price) {
+    this.price = price;
+    return this;
+  }
+
+  public Item status(ItemStatus status) {
+    this.status = status;
+    return this;
+  }
+
+  @Override
+    public boolean equals(Object o) {
+        if (o == this)
+            return true;
+        if (!(o instanceof Item)) {
+            return false;
+        }
+        Item item = (Item) o;
+        return Objects.equals(id, item.id) && Objects.equals(user, item.user) && Objects.equals(title, item.title) && Objects.equals(description, item.description) && Objects.equals(category, item.category) && Objects.equals(price, item.price) && Objects.equals(status, item.status);
+  }
+
+  @Override
+  public int hashCode() {
+    return Objects.hash(id, user, title, description, category, price, status);
+  }
+
+  @Override
+  public String toString() {
+    return "{" +
+      " id='" + getId() + "'" +
+      ", user='" + getUser() + "'" +
+      ", title='" + getTitle() + "'" +
+      ", description='" + getDescription() + "'" +
+      ", category='" + getCategory() + "'" +
+      ", price='" + getPrice() + "'" +
+      ", status='" + getStatus() + "'" +
+      "}";
   }
 
   

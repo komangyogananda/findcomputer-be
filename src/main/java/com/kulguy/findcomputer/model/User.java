@@ -1,6 +1,7 @@
 package com.kulguy.findcomputer.model;
 
 import java.util.List;
+import java.util.Objects;
 
 import javax.persistence.*;
 import javax.validation.constraints.NotBlank;
@@ -50,29 +51,27 @@ public class User extends DateAudit {
   )
   private List<Item> items;
 
-  @OneToMany(
-    mappedBy = "userBought",
-    cascade = CascadeType.ALL
-  )
-  private List<Item> itemsBought;
-  
-  @OneToOne
-  @JoinColumn(name = "profile_picture_id")
-  @Null
-  private File profilePicture;
+  public void addItems(Item item){
+    items.add(item);
+    item.setUser(this);
+  }
 
-  public User(){}
+  public void removeItems(Item item){
+    items.remove(item);
+    item.setUser(null);
+  }
 
-  public User(String name, String email, String telp, String username, String password, String description, File profilePicture) {
+  public User() {
+  }
+
+  public User(String name, String email, String telp, String username, String password, String description) {
     this.name = name;
     this.email = email;
     this.telp = telp;
     this.username = username;
     this.password = password;
     this.description = description;
-    this.profilePicture = profilePicture;
   }
-
 
   public Long getId() {
     return this.id;
@@ -138,40 +137,60 @@ public class User extends DateAudit {
     this.items = items;
   }
 
-  public void addItems(Item item){
-    items.add(item);
-    item.setUser(this);
+  public User id(Long id) {
+    this.id = id;
+    return this;
   }
 
-  public void removeItems(Item item){
-    items.remove(item);
-    item.setUser(null);
+  public User name(String name) {
+    this.name = name;
+    return this;
   }
 
-  public void addItemsBought(Item item){
-    itemsBought.add(item);
-    item.setUserBought(this);
+  public User email(String email) {
+    this.email = email;
+    return this;
   }
 
-  public void removeItemsBought(Item item){
-    itemsBought.remove(item);
-    item.setUserBought(null);
+  public User telp(String telp) {
+    this.telp = telp;
+    return this;
   }
 
-  public List<Item> getItemsBought() {
-    return this.itemsBought;
+  public User username(String username) {
+    this.username = username;
+    return this;
   }
 
-  public void setItemsBought(List<Item> itemsBought) {
-    this.itemsBought = itemsBought;
+  public User password(String password) {
+    this.password = password;
+    return this;
   }
 
-  public File getProfilePicture() {
-    return this.profilePicture;
+  public User description(String description) {
+    this.description = description;
+    return this;
   }
 
-  public void setProfilePicture(File profilePicture) {
-    this.profilePicture = profilePicture;
+  public User items(List<Item> items) {
+    this.items = items;
+    return this;
+  }
+
+  @Override
+    public boolean equals(Object o) {
+        if (o == this)
+            return true;
+        if (!(o instanceof User)) {
+            return false;
+        }
+        User user = (User) o;
+        return Objects.equals(id, user.id) && Objects.equals(name, user.name) && Objects.equals(email, user.email) && Objects.equals(telp, user.telp) && Objects.equals(username, user.username) && Objects.equals(password, user.password) && Objects.equals(description, user.description) && Objects.equals(items, user.items);
+  }
+
+  @Override
+  public int hashCode() {
+    return Objects.hash(id, name, email, telp, username, password, description, items);
   }
 
   @Override
@@ -185,8 +204,6 @@ public class User extends DateAudit {
       ", password='" + getPassword() + "'" +
       ", description='" + getDescription() + "'" +
       ", items='" + getItems() + "'" +
-      ", itemsBought='" + getItemsBought() + "'" +
-      ", profilePicture='" + getProfilePicture() + "'" +
       "}";
   }
 
