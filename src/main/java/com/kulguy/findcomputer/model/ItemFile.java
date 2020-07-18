@@ -11,35 +11,33 @@ import javax.persistence.Id;
 import javax.persistence.JoinColumn;
 import javax.persistence.ManyToOne;
 import javax.persistence.Table;
-
+import javax.persistence.UniqueConstraint;
 import javax.validation.constraints.NotNull;
 
-import lombok.Getter;
-import lombok.Setter;
-
 @Entity
-@Table(name = "item_files")
+@Table(name = "item_files", uniqueConstraints = {
+  @UniqueConstraint(columnNames = {
+    "item_id",
+    "file_id"
+  })
+})
 public class ItemFile extends DateAudit {
 
   @Id
   @GeneratedValue(strategy = GenerationType.IDENTITY)
-  @Setter @Getter
   private Long id;
 
   @NotNull
-  @Setter @Getter
   @ManyToOne(fetch = FetchType.LAZY)
   @JoinColumn(name = "item_id")
   private Item item;
 
   @NotNull
-  @Setter @Getter
   @ManyToOne(fetch = FetchType.LAZY)
   @JoinColumn(name = "file_id")
   private File file;
 
   @Column(nullable = true, name = "caption")
-  @Setter @Getter
   private String caption;
 
   public ItemFile(@NotNull Item item, @NotNull File file, String caption) {
@@ -47,4 +45,38 @@ public class ItemFile extends DateAudit {
     this.file = file;
     this.caption = caption;
   }
+
+
+  public Long getId() {
+    return this.id;
+  }
+
+  public void setId(Long id) {
+    this.id = id;
+  }
+
+  public Item getItem() {
+    return this.item;
+  }
+
+  public void setItem(Item item) {
+    this.item = item;
+  }
+
+  public File getFile() {
+    return this.file;
+  }
+
+  public void setFile(File file) {
+    this.file = file;
+  }
+
+  public String getCaption() {
+    return this.caption;
+  }
+
+  public void setCaption(String caption) {
+    this.caption = caption;
+  }
+
 }

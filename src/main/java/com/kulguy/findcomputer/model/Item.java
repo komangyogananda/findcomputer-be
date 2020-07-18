@@ -16,9 +16,6 @@ import javax.validation.constraints.NotBlank;
 import javax.validation.constraints.NotNull;
 import javax.validation.constraints.Positive;
 
-import lombok.Getter;
-import lombok.Setter;
-
 import java.time.Instant;
 
 @Entity
@@ -27,63 +24,121 @@ public class Item extends DateAudit {
 
   @Id
   @GeneratedValue(strategy = GenerationType.IDENTITY)
-  @Setter 
-  @Getter
-  private Integer id;
+  private Long id;
 
   @NotNull
   @ManyToOne(fetch = FetchType.LAZY)
   @JoinColumn(name = "user_id")
-  @Setter 
-  @Getter
   private User user;
 
   @ManyToOne(fetch = FetchType.LAZY)
   @JoinColumn(name = "user_bought_id")
-  @Setter 
-  @Getter
   private User userBought;
 
   @NotBlank
   @Column(nullable = false, name = "title")
-  @Setter @Getter
   private String title;
 
   @Column(nullable = true, name = "description")
-  @Setter 
-  @Getter
   private String description;
 
   @Enumerated(EnumType.STRING)
   @Column(nullable = false, name="category")
-  @Setter @Getter
   private ItemCategory category;
 
   @Column(nullable = false, name = "price")
-  @Setter @Getter
-  private Double price;
+  @Positive
+  private Long price;
 
   @Enumerated(EnumType.STRING)
   @Column(nullable = false, name = "status")
-  @Positive
-  @Setter @Getter
   private ItemStatus status;
 
   @Column(nullable = true, name = "sold_at")
-  @Setter 
-  @Getter
   private Instant soldAt;
 
 
   public Item(){}
 
-
-  public Item(User user, String title, String description, ItemCategory category, Double price) {
+  public Item(User user, String title, String description, ItemCategory category, Long price) {
     this.user = user;
     this.title = title;
     this.description = description;
     this.category = category;
     this.price = price;
   }
+
+  public Long getId() {
+    return this.id;
+  }
+
+  public void setId(Long id) {
+    this.id = id;
+  }
+
+  public User getUser() {
+    return this.user;
+  }
+
+  public void setUser(User user) {
+    this.user = user;
+  }
+
+  public User getUserBought() {
+    return this.userBought;
+  }
+
+  public void setUserBought(User userBought) {
+    this.userBought = userBought;
+  }
+
+  public String getTitle() {
+    return this.title;
+  }
+
+  public void setTitle(String title) {
+    this.title = title;
+  }
+
+  public String getDescription() {
+    return this.description;
+  }
+
+  public void setDescription(String description) {
+    this.description = description;
+  }
+
+  public ItemCategory getCategory() {
+    return this.category;
+  }
+
+  public void setCategory(ItemCategory category) {
+    this.category = category;
+  }
+
+  public Long getPrice() {
+    return this.price;
+  }
+
+  public void setPrice(Long price) {
+    this.price = price;
+  }
+
+  public ItemStatus getStatus() {
+    return this.status;
+  }
+
+  public void setStatus(ItemStatus status) {
+    this.status = status;
+  }
+
+  public Instant getSoldAt() {
+    return this.soldAt;
+  }
+
+  public void setSoldAt(Instant soldAt) {
+    this.soldAt = soldAt;
+  }
+
   
 }

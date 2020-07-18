@@ -119,4 +119,19 @@ public class UserPrincipal implements UserDetails {
     return Objects.hash(id);
   }
 
+
+  @Override
+  public String toString() {
+    return "{" +
+      " id='" + getId() + "'" +
+      ", username='" + getUsername() + "'" +
+      ", email='" + getEmail() + "'" +
+      ", telp='" + getTelp() + "'" +
+      ", description='" + getDescription() + "'" +
+      ", password='" + getPassword() + "'" +
+      ", authorities='" + getAuthorities() + "'" +
+      "}";
+  }
+
+
 }

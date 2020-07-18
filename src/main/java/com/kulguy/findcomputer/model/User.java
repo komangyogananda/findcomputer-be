@@ -7,9 +7,6 @@ import javax.validation.constraints.NotBlank;
 import javax.validation.constraints.Null;
 import javax.validation.constraints.Size;
 
-import lombok.Getter;
-import lombok.Setter;
-
 @Entity
 @Table(name = "users", uniqueConstraints = {
         @UniqueConstraint(columnNames = "username"),
@@ -57,7 +54,7 @@ public class User extends DateAudit {
     mappedBy = "userBought",
     cascade = CascadeType.ALL
   )
-  private List<Item> items_bought;
+  private List<Item> itemsBought;
   
   @OneToOne
   @JoinColumn(name = "profile_picture_id")
@@ -75,6 +72,7 @@ public class User extends DateAudit {
     this.description = description;
     this.profilePicture = profilePicture;
   }
+
 
   public Long getId() {
     return this.id;
@@ -140,12 +138,32 @@ public class User extends DateAudit {
     this.items = items;
   }
 
-  public List<Item> getItems_bought() {
-    return this.items_bought;
+  public void addItems(Item item){
+    items.add(item);
+    item.setUser(this);
   }
 
-  public void setItems_bought(List<Item> items_bought) {
-    this.items_bought = items_bought;
+  public void removeItems(Item item){
+    items.remove(item);
+    item.setUser(null);
+  }
+
+  public void addItemsBought(Item item){
+    itemsBought.add(item);
+    item.setUserBought(this);
+  }
+
+  public void removeItemsBought(Item item){
+    itemsBought.remove(item);
+    item.setUserBought(null);
+  }
+
+  public List<Item> getItemsBought() {
+    return this.itemsBought;
+  }
+
+  public void setItemsBought(List<Item> itemsBought) {
+    this.itemsBought = itemsBought;
   }
 
   public File getProfilePicture() {
@@ -155,5 +173,22 @@ public class User extends DateAudit {
   public void setProfilePicture(File profilePicture) {
     this.profilePicture = profilePicture;
   }
+
+  @Override
+  public String toString() {
+    return "{" +
+      " id='" + getId() + "'" +
+      ", name='" + getName() + "'" +
+      ", email='" + getEmail() + "'" +
+      ", telp='" + getTelp() + "'" +
+      ", username='" + getUsername() + "'" +
+      ", password='" + getPassword() + "'" +
+      ", description='" + getDescription() + "'" +
+      ", items='" + getItems() + "'" +
+      ", itemsBought='" + getItemsBought() + "'" +
+      ", profilePicture='" + getProfilePicture() + "'" +
+      "}";
+  }
+
 
 }

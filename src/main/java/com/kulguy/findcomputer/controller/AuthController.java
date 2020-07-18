@@ -48,12 +48,11 @@ public class AuthController {
 
   @PostMapping("/signin")
   public ResponseEntity<?> authenticateUser(@Valid @RequestBody LoginRequest loginRequest){
-    logger.info(String.format("%s %s %s authenticateUser", loginRequest.getUsername(), loginRequest.getPassword(), passwordEncoder.encode(loginRequest.getPassword())));
+    logger.info(String.format("%s %s authenticateUser", loginRequest.getUsername(), loginRequest.getPassword()));
     Authentication authentication = authenticationManager.authenticate(
       new UsernamePasswordAuthenticationToken(loginRequest.getUsername(), loginRequest.getPassword())
     );
-    logger.info(authentication.getCredentials().toString());
-    logger.info(String.format("%s %s oi", loginRequest.getUsername(), loginRequest.getPassword()));
+    // logger.info(authentication.getCredentials().toString());
     SecurityContextHolder.getContext().setAuthentication(authentication);
     String jwt = jwtTokenProvider.generateToken(authentication);
     return ResponseEntity.ok(new JwtAuthenticationResponse(jwt));
@@ -69,7 +68,7 @@ public class AuthController {
       return new ResponseEntity(new ApiResponse(false, "Email is already used"), HttpStatus.BAD_REQUEST);
     }
 
-    User user = new User(signUpRequest.getName(), signUpRequest.getEmail(), signUpRequest.getTelp(), signUpRequest.getUsername(), signUpRequest.getUsername(), signUpRequest.getDescription(), null);
+    User user = new User(signUpRequest.getName(), signUpRequest.getEmail(), signUpRequest.getTelp(), signUpRequest.getUsername(), signUpRequest.getPassword(), signUpRequest.getDescription(), null);
     user.setPassword(passwordEncoder.encode(user.getPassword()));
     User result = userRepo.save(user);
 
