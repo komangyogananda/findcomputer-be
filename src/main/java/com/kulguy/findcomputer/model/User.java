@@ -1,5 +1,6 @@
 package com.kulguy.findcomputer.model;
 
+import java.util.ArrayList;
 import java.util.List;
 import java.util.Objects;
 
@@ -49,7 +50,7 @@ public class User extends DateAudit {
     mappedBy = "user",
     cascade = CascadeType.ALL
   )
-  private List<Item> items;
+  private List<Item> items = new ArrayList<Item>();
 
   public void addItems(Item item){
     items.add(item);

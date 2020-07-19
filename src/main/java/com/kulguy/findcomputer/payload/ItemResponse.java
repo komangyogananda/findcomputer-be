@@ -1,5 +1,6 @@
 package com.kulguy.findcomputer.payload;
 
+import java.util.List;
 import java.util.Objects;
 
 public class ItemResponse {
@@ -9,18 +10,20 @@ public class ItemResponse {
   private String description;
   private String category;
   private Long price;
+  private List<String> images;
 
 
   public ItemResponse() {
   }
 
-  public ItemResponse(Long id, String username, String title, String description, String category, Long price) {
+  public ItemResponse(Long id, String username, String title, String description, String category, Long price, List<String> images) {
     this.id = id;
     this.username = username;
     this.title = title;
     this.description = description;
     this.category = category;
     this.price = price;
+    this.images = images;
   }
 
   public Long getId() {
@@ -99,6 +102,14 @@ public class ItemResponse {
   public ItemResponse price(Long price) {
     this.price = price;
     return this;
+  }
+
+  public List<String> getImages() {
+    return this.images;
+  }
+
+  public void setImages(List<String> images) {
+    this.images = images;
   }
 
   @Override

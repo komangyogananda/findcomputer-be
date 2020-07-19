@@ -1,5 +1,7 @@
 package com.kulguy.findcomputer.payload;
 
+import java.util.List;
+
 import javax.validation.constraints.NotBlank;
 import javax.validation.constraints.NotNull;
 
@@ -22,6 +24,8 @@ public class ItemRequest {
   @NotBlank
   @NotNull
   private Long price;
+
+  private List<ImageRequest> images;
 
   public String getCategory() {
     return this.category;
@@ -57,6 +61,14 @@ public class ItemRequest {
 
   public void setPrice(Long price) {
     this.price = price;
+  }
+
+  public List<ImageRequest> getImages() {
+    return this.images;
+  }
+
+  public void setImages(List<ImageRequest> images) {
+    this.images = images;
   }
 
   

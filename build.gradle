@@ -24,7 +24,8 @@ dependencies {
 	testImplementation('org.springframework.boot:spring-boot-starter-test') {
 		exclude group: 'org.junit.vintage', module: 'junit-vintage-engine'
 	}
-
+  compile group: 'commons-codec', name: 'commons-codec', version: '1.14'
+  compile group: 'com.google.cloud', name: 'google-cloud-storage', version: '1.111.2'
 	// https://mvnrepository.com/artifact/io.jsonwebtoken/jjwt
 	compile group: 'io.jsonwebtoken', name: 'jjwt', version: '0.9.1'
 }

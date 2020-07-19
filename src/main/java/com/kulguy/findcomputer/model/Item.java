@@ -1,5 +1,6 @@
 package com.kulguy.findcomputer.model;
 
+import javax.persistence.CascadeType;
 import javax.persistence.Column;
 import javax.persistence.Entity;
 import javax.persistence.EnumType;
@@ -10,6 +11,7 @@ import javax.persistence.GenerationType;
 import javax.persistence.Id;
 import javax.persistence.JoinColumn;
 import javax.persistence.ManyToOne;
+import javax.persistence.OneToMany;
 import javax.persistence.Table;
 
 import javax.validation.constraints.NotBlank;
@@ -17,6 +19,8 @@ import javax.validation.constraints.NotNull;
 import javax.validation.constraints.Positive;
 
 import java.time.Instant;
+import java.util.ArrayList;
+import java.util.List;
 import java.util.Objects;
 
 @Entity
@@ -50,7 +54,12 @@ public class Item extends DateAudit {
   @Enumerated(EnumType.STRING)
   @Column(nullable = false, name = "status")
   private ItemStatus status;
- 
+
+  @OneToMany(
+    mappedBy = "item",
+    cascade = CascadeType.ALL
+  )
+  private List<File> images = new ArrayList<File>();
 
   public Item() {
   }
@@ -156,6 +165,24 @@ public class Item extends DateAudit {
     return this;
   }
 
+  public void addImage(File image){
+    images.add(image);
+    image.setItem(this);
+  }
+
+  public void removeImage(File image){
+    images.remove(image);
+    image.setItem(null);
+  }
+
+  public List<File> getImages() {
+    return this.images;
+  }
+
+  public void setImages(List<File> images) {
+    this.images = images;
+  }
+
   @Override
     public boolean equals(Object o) {
         if (o == this)
@@ -182,8 +209,10 @@ public class Item extends DateAudit {
       ", category='" + getCategory() + "'" +
       ", price='" + getPrice() + "'" +
       ", status='" + getStatus() + "'" +
+      ", images='" + getImages() + "'" +
       "}";
   }
+  
 
   
 }

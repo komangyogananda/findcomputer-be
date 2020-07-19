@@ -4,11 +4,16 @@ import com.kulguy.findcomputer.repository.ItemRepository;
 import com.kulguy.findcomputer.repository.UserRepository;
 import com.kulguy.findcomputer.security.UserPrincipal;
 
+import java.io.FileInputStream;
+import java.time.Instant;
 import java.util.Collections;
 import java.util.List;
 
-import javax.persistence.criteria.Predicate;
 import javax.transaction.Transactional;
+
+import com.google.auth.Credentials;
+import com.google.auth.oauth2.GoogleCredentials;
+import com.google.cloud.storage.*;
 
 import com.kulguy.findcomputer.Utils.AppConstants;
 import com.kulguy.findcomputer.Utils.ModelMapper;
@@ -17,18 +22,20 @@ import com.kulguy.findcomputer.model.Item;
 import com.kulguy.findcomputer.model.ItemCategory;
 import com.kulguy.findcomputer.model.ItemStatus;
 import com.kulguy.findcomputer.model.User;
+import com.kulguy.findcomputer.payload.ImageRequest;
 import com.kulguy.findcomputer.payload.ItemRequest;
 import com.kulguy.findcomputer.payload.ItemResponse;
 import com.kulguy.findcomputer.payload.PagedResponse;
 
+import org.apache.commons.codec.binary.Base64;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.beans.support.PagedListHolder;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Sort;
-import org.springframework.data.util.Streamable;
 import org.springframework.data.domain.Pageable;
 
 import org.springframework.stereotype.Service;
@@ -41,7 +48,34 @@ public class ItemService {
 
   @Autowired UserRepository userRepository;
 
+  @Value("${app.projectid}")
+  private String projectId;
+
+  @Value("${app.gcpbucketname}")
+  private String bucketname;
+
   private static final Logger logger = LoggerFactory.getLogger(ItemService.class);
+
+  public String generateImageFilename(UserPrincipal currentUser, Item item, ImageRequest imageRequest){
+    Instant time = Instant.now();
+    String filename = String.format("%s_item_%s_time_%s_file_%s", currentUser.getUsername(), item.getId(), time.toEpochMilli(), imageRequest.getFilename());
+    return filename;
+  }
+
+  public String generateGoogleStorageURL(String filename){
+    String url = String.format("https://storage.cloud.google.com/%s/%s", bucketname, filename);
+    return url;
+  }
+
+  public void deleteGoogleStorageFile(String filename){
+    try {
+      Credentials credentials = GoogleCredentials.fromStream(new FileInputStream("google-services.json"));
+      Storage storage = StorageOptions.newBuilder().setCredentials(credentials).setProjectId(projectId).build().getService();
+      storage.delete(bucketname, filename);
+    } catch (Exception e) {
+      
+    }
+  }
 
   public PagedResponse<ItemResponse> getAllItems(UserPrincipal currentUser, int page){
     validatePageNumber(page);
@@ -100,6 +134,9 @@ public class ItemService {
     }
     User user = userRepository.findById(currentUser.getId()).get();
     user.removeItems(item);
+    item.getImages().forEach(image -> {
+      this.deleteGoogleStorageFile(image.getFilename());
+    });
     itemRepository.delete(item);
   }
 
@@ -121,8 +158,25 @@ public class ItemService {
     item.setDescription(itemRequest.getDescription());
     item.setStatus(ItemStatus.AVAILABLE);
     user.addItems(item);
-    itemRepository.save(item);
+    item = itemRepository.save(item);
     return item;
+  }
+
+  public Blob createFile(String imageValue, UserPrincipal currentUser, String filename){
+    int startPoint = imageValue.indexOf(",");
+    if (startPoint > -1) {
+        imageValue = imageValue.substring(startPoint + 1);
+    }
+    byte[] imageByte=Base64.decodeBase64(imageValue);
+    try {
+      Credentials credentials = GoogleCredentials.fromStream(new FileInputStream("google-services.json"));
+      Storage storage = StorageOptions.newBuilder().setCredentials(credentials).setProjectId(projectId).build().getService();
+      Bucket bucket = storage.get(bucketname);
+      Blob blob = bucket.create(filename, imageByte);
+      return blob;
+    } catch (Exception e) {
+      throw new BadRequestException("Failed to upload file");
+    }
   }
 
   public PagedResponse<ItemResponse> searchItem(int page, String queryString, List<ItemCategory> categories){
