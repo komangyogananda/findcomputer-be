@@ -16,8 +16,11 @@ Find Computer Backend dikerjakan dengan menggunakan framework Spring Boot. Arsit
 # Local Deployment
 
   ## Google Cloud Storage
+<<<<<<< HEAD
   - Unduh google-services.json dari akun google cloud platform sesuai instruksi [ini](https://developers.google.com/identity/protocols/oauth2/service-account).
   - Copy file google-services.json dan letakkan pada root project.
+=======
+>>>>>>> a8719fb8b6b82e28c9cc7e327b6ff16d7bde38ed
   - Buat bucket pada Google Cloud Storage sesuai instruksi [ini](https://cloud.google.com/storage/docs/creating-buckets).
   - Buka application-dev.properties dan ubahlah variable berikut sesuai dengan environtment anda  
     ```properties
